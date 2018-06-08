@@ -1,3 +1,4 @@
+
 import numpy as np
 import os
 
@@ -11,7 +12,7 @@ class NaNException(Exception):
 
 
 def policy_range(n, res=10):
-    step = int(float(n)/float(res))
+    step = int(float(n)/float(res))                     # make n_range equal to [0,n/res, 2(n/res), ... res (n/res)]
     n_range = range(0,int(n+1),step)
     if not n_range[-1] == n:
         n_range.append(n)
@@ -21,7 +22,7 @@ def policy_range(n, res=10):
     # For example if resampling validation sets (with different number of
     # units in the randomized sub-population)
 
-    while len(n_range) > res:
+    while len(n_range) > res:                           # deletes middle entries at random until n_range has the appropriate length
         k = np.random.randint(len(n_range)-2)+1
         del n_range[k]
 
@@ -91,19 +92,24 @@ def pdist2(X,Y):
 
     return np.sqrt(D + 1e-8)
 
-def cf_nn(x, t):
-    It = np.array(np.where(t==1))[0,:]
-    Ic = np.array(np.where(t==0))[0,:]
+#======================================================================================================= cf_nn(...) ================================================================
 
-    x_c = x[Ic,:]
+def cf_nn(x, t):                            # counterfactual neural network!!
+    It = np.array(np.where(t==1))[0,:]      # find indices (I) of treated group (which has t = 1)
+    Ic = np.array(np.where(t==0))[0,:]                      # and control group (which has t = 0)
+
+    x_c = x[Ic,:]                           # separate out the treated and control x's
     x_t = x[It,:]
 
-    D = pdist2(x_c, x_t)
+    D = pdist2(x_c, x_t)                    # calculates euclidean distance
 
     nn_t = Ic[np.argmin(D,0)]
     nn_c = It[np.argmin(D,1)]
 
     return nn_t, nn_c
+
+#======================================================================================================= pehe_nn(...) ==============================================================
+
 
 def pehe_nn(yf_p, ycf_p, y, x, t, nn_t=None, nn_c=None):
     if nn_t is None or nn_c is None:
@@ -131,6 +137,8 @@ def pehe_nn(yf_p, ycf_p, y, x, t, nn_t=None, nn_c=None):
     pehe_nn = np.sqrt(np.mean(np.square(eff_pred - eff_nn)))
 
     return pehe_nn
+
+#======================================================================================================= evaluate_bin_att(...) =====================================================
 
 def evaluate_bin_att(predictions, data, i_exp, I_subset=None,
                      compute_policy_curve=False, nn_t=None, nn_c=None):
@@ -186,6 +194,8 @@ def evaluate_bin_att(predictions, data, i_exp, I_subset=None,
             'err_fact': err_fact, 'lpr': lpr,
             'policy_value': policy_value, 'policy_risk': 1-policy_value,
             'policy_curve': policy_curve, 'pehe_nn': pehe_appr}
+
+#======================================================================================================= evaluate_cont_ate(...) ====================================================
 
 def evaluate_cont_ate(predictions, data, i_exp, I_subset=None,
     compute_policy_curve=False, nn_t=None, nn_c=None):
@@ -244,9 +254,10 @@ def evaluate_cont_ate(predictions, data, i_exp, I_subset=None,
             'pehe': pehe, 'rmse_ite': rmse_ite, 'pehe_nn': pehe_appr}
             #'policy_value': policy_value, 'policy_curve': policy_curve}
 
-def evaluate_result(result, data, validation=False,
-        multiple_exps=False, binary=False):
+#======================================================================================================= evaluate_result(...) ======================================================
 
+def evaluate_result(result, data, validation=False, multiple_exps=False, binary=False):
+    #validation = False###
     predictions = result['pred']
 
     if validation:
@@ -321,6 +332,8 @@ def evaluate_result(result, data, validation=False,
 
     return eval_dict
 
+#======================================================================================================= evaluate(...) =============================================================
+
 def evaluate(output_dir, data_path_train, data_path_test=None, binary=False):
 
     print '\nEvaluating experiment %s...' % output_dir
@@ -365,7 +378,7 @@ def evaluate(output_dir, data_path_train, data_path_test=None, binary=False):
             print 'Evaluating %d...' % (i+1)
 
         try:
-            eval_train = evaluate_result(result['train'], data_train,
+            eval_train = evaluate_result(result['train'], data_train,						#this is one of the key parts - calls evaluate_result on the training and test sets
                 validation=False, multiple_exps=multiple_exps, binary=binary)
 
             eval_valid = evaluate_result(result['train'], data_train,

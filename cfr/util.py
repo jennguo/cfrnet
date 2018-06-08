@@ -5,8 +5,8 @@ SQRT_CONST = 1e-10
 
 FLAGS = tf.app.flags.FLAGS
 
+# """ Construct a train/validation split """
 def validation_split(D_exp, val_fraction):
-    """ Construct a train/validation split """
     n = D_exp['x'].shape[0]
 
     if val_fraction > 0:
@@ -21,6 +21,7 @@ def validation_split(D_exp, val_fraction):
 
     return I_train, I_valid
 
+# low-level print statement
 def log(logfile,str):
     """ Log a string in a file """
     with open(logfile,'a') as f:
@@ -34,6 +35,7 @@ def save_config(fname):
     f.write(s)
     f.close()
 
+# load data from file
 def load_data(fname):
     """ Load data set """
     if fname[-3:] == 'npz':
@@ -63,8 +65,8 @@ def load_data(fname):
 
     return data
 
+# """ Load sparse data set """
 def load_sparse(fname):
-    """ Load sparse data set """
     E = np.loadtxt(open(fname,"rb"),delimiter=",")
     H = E[0,:]
     n = int(H[0])
@@ -75,12 +77,12 @@ def load_sparse(fname):
 
     return S
 
+# ''' Numerically safe version of TensorFlow sqrt '''
 def safe_sqrt(x, lbound=SQRT_CONST):
-    ''' Numerically safe version of TensorFlow sqrt '''
     return tf.sqrt(tf.clip_by_value(x, lbound, np.inf))
 
+# ''' Linear MMD '''
 def lindisc(X,p,t):
-    ''' Linear MMD '''
 
     it = tf.where(t>0)[:,0]
     ic = tf.where(t<1)[:,0]
@@ -99,8 +101,8 @@ def lindisc(X,p,t):
 
     return mmd
 
+# ''' Linear MMD '''
 def mmd2_lin(X,t,p):
-    ''' Linear MMD '''
 
     it = tf.where(t>0)[:,0]
     ic = tf.where(t<1)[:,0]
@@ -115,8 +117,8 @@ def mmd2_lin(X,t,p):
 
     return mmd
 
+# """ Computes the l2-RBF MMD for X given t """
 def mmd2_rbf(X,t,p,sig):
-    """ Computes the l2-RBF MMD for X given t """
 
     it = tf.where(t>0)[:,0]
     ic = tf.where(t<1)[:,0]
@@ -138,18 +140,19 @@ def mmd2_rbf(X,t,p,sig):
 
     return mmd
 
+# """ Computes the squared Euclidean distance between all pairs x in X, y in Y """
 def pdist2sq(X,Y):
-    """ Computes the squared Euclidean distance between all pairs x in X, y in Y """
     C = -2*tf.matmul(X,tf.transpose(Y))
     nx = tf.reduce_sum(tf.square(X),1,keepdims=True)
     ny = tf.reduce_sum(tf.square(Y),1,keepdims=True)
     D = (C + tf.transpose(ny)) + nx
     return D
 
+# """ Returns the tensorflow pairwise distance matrix """
 def pdist2(X,Y):
-    """ Returns the tensorflow pairwise distance matrix """
     return safe_sqrt(pdist2sq(X,Y))
 
+# returns the imbalance measure between the subsets of X where t = 0 and = 1, respectively, using pdist2
 def pop_dist(X,t):
     it = tf.where(t>0)[:,0]
     ic = tf.where(t<1)[:,0]
@@ -162,8 +165,9 @@ def pop_dist(X,t):
     M = pdist2(Xt,Xc)
     return M
 
+# """ Returns the Wasserstein distance between treatment groups """
 def wasserstein(X,t,p,lam=10,its=10,sq=False,backpropT=False):
-    """ Returns the Wasserstein distance between treatment groups """
+
 
     it = tf.where(t>0)[:,0]
     ic = tf.where(t<1)[:,0]
@@ -216,8 +220,8 @@ def wasserstein(X,t,p,lam=10,its=10,sq=False,backpropT=False):
 
     return D, Mlam
 
+# """ Projects a vector x onto the k-simplex """
 def simplex_project(x,k):
-    """ Projects a vector x onto the k-simplex """
     d = x.shape[0]
     mu = np.sort(x,axis=0)[::-1]
     nu = (np.cumsum(mu)-k)/range(1,d+1)

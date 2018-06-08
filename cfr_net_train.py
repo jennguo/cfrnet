@@ -64,7 +64,7 @@ __DEBUG__ = False
 if FLAGS.debug:
     __DEBUG__ = True
 
-def train(CFR, sess, train_step, D, I_valid, D_test, logfile, i_exp):
+def train(CFR, sess, train_step, D, I_valid, D_test, logfile, i_exp):     ##this method does the training!!!
     """ Trains a CFR model on supplied data """
 
     ''' Train/validation split '''
@@ -260,9 +260,9 @@ def run(outdir):
     sess = tf.Session()
 
     ''' Initialize input placeholders '''
-    x  = tf.placeholder("float", shape=[None, D['dim']], name='x') # Features
-    t  = tf.placeholder("float", shape=[None, 1], name='t')   # Treatent
-    y_ = tf.placeholder("float", shape=[None, 1], name='y_')  # Outcome
+    x  = tf.placeholder("float", shape=[None, D['dim']], name='x')  # Features
+    t  = tf.placeholder("float", shape=[None, 1], name='t')         # Treatment
+    y_ = tf.placeholder("float", shape=[None, 1], name='y_')        # Outcome
 
     ''' Parameter placeholders '''
     r_alpha = tf.placeholder("float", name='r_alpha')
@@ -279,7 +279,7 @@ def run(outdir):
     ''' Set up optimizer '''
     global_step = tf.Variable(0, trainable=False)
     lr = tf.train.exponential_decay(FLAGS.lrate, global_step, \
-        NUM_ITERATIONS_PER_DECAY, FLAGS.lrate_decay, staircase=True)
+        NUM_ITERATIONS_PER_DECAY, FLAGS.lrate_decay, staircase=True)            #? is this the loss function??
 
     opt = None
     if FLAGS.optimizer == 'Adagrad':

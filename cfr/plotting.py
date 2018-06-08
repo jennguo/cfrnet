@@ -73,6 +73,9 @@ def table_str_bin(result_set, row_labels, labels_long=None, binary=False):
     cols = [c for c in cols if c in result_set[0]]
 
     head = [cap(c) for c in cols]
+    #if not result_set[0] or not result_set[1]: ###
+    #    return ""
+
     colw = np.max([16, np.max([len(h)+1 for h in head])])
     col1w = np.max([len(h)+1 for h in row_labels])
 
@@ -257,7 +260,6 @@ def plot_evaluation_cont(results, configs, output_dir, data_train_path, data_tes
     plot_option_correlation(output_dir, diff_opts, results_all, configs_all,
         CORR_CHOICE_SET_CONT, CORR_CRITERION_CONT, filter_str)
 
-
 def plot_evaluation_bin(results, configs, output_dir, data_train_path, data_test_path, filters=None):
 
     data_train = load_data(data_train_path)
@@ -337,7 +339,6 @@ def plot_evaluation_bin(results, configs, output_dir, data_train_path, data_test
     ''' Plot option correlation '''
     plot_option_correlation(output_dir, diff_opts, results_all, configs_all,
         CORR_CHOICE_SET_BIN, CORR_CRITERION_BIN, filter_str)
-
 
 def plot_cfr_evaluation_bin(results, configs, output_dir):
     alphas = [cfg['p_alpha'] for cfg in configs]

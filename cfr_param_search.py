@@ -1,3 +1,5 @@
+#this file, when run, just calls the run(...) method below. 
+
 import sys
 import os
 import numpy as np
@@ -31,11 +33,13 @@ def cfg_string(cfg):
     cfg_str = ','.join(['%s:%s' % (k, str(cfg[k])) for k in ks])
     return cfg_str.lower()
 
+# is the string cfg a substring of the file at used_cfg_file?
 def is_used_cfg(cfg, used_cfg_file):
     cfg_str = cfg_string(cfg)
     used_cfgs = read_used_cfgs(used_cfg_file)
     return cfg_str in used_cfgs
 
+# helper
 def read_used_cfgs(used_cfg_file):
     used_cfgs = set()
     with open(used_cfg_file, 'r') as f:
@@ -44,6 +48,7 @@ def read_used_cfgs(used_cfg_file):
 
     return used_cfgs
 
+# helper
 def save_used_cfg(cfg, used_cfg_file):
     with open(used_cfg_file, 'a') as f:
         cfg_str = cfg_string(cfg)

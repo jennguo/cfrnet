@@ -22,7 +22,7 @@ class cfr_net(object):
         else:
             self.nonlin = tf.nn.relu
 
-        self._build_graph(x, t, y_ , p_t, FLAGS, r_alpha, r_lambda, do_in, do_out, dims)
+        self._build_graph(x, t, y_ , p_t, FLAGS, r_alpha, r_lambda, do_in, do_out, dims)		#!
 
     def _add_variable(self, var, name):
         ''' Adds variables to the internal track-keeper '''
@@ -66,11 +66,11 @@ class cfr_net(object):
         self.x = x
         self.t = t
         self.y_ = y_
-        self.p_t = p_t
-        self.r_alpha = r_alpha
-        self.r_lambda = r_lambda
-        self.do_in = do_in
-        self.do_out = do_out
+        self.p_t = p_t              #?
+        self.r_alpha = r_alpha      # hypar for reducing imbalance in the repn of the data (larger = penalize imbalance more)
+        self.r_lambda = r_lambda    # hypar for regzn (larger = penalize complexity more)
+        self.do_in = do_in          #?
+        self.do_out = do_out        #?
 
         dim_input = dims[0]
         dim_in = dims[1]
@@ -94,7 +94,7 @@ class cfr_net(object):
         h_in = [x]
         for i in range(0, FLAGS.n_in):
             if i==0:
-                ''' If using variable selection, first layer is just rescaling'''
+                ''' If using variable selection, first layer is just rescaling''' #variable selection = feature selection
                 if FLAGS.varsel:
                     weights_in.append(tf.Variable(1.0/dim_input*tf.ones([dim_input])))
                 else:
@@ -130,7 +130,7 @@ class cfr_net(object):
         else:
             h_rep_norm = 1.0*h_rep
 
-        ''' Construct ouput layers '''
+        ''' Construct output layers '''
         y, weights_out, weights_pred = self._build_output_graph(h_rep_norm, t, dim_in, dim_out, do_out, FLAGS)
 
         ''' Compute sample reweighting '''
