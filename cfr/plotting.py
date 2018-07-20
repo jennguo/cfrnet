@@ -121,25 +121,27 @@ def select_parameters(results, configs, stop_set, stop_criterion, choice_set, ch
             stop_criterion = 'rmse_fact'
 
     ''' Select early stopping for each repetition '''
-    n_exp = results[stop_set][stop_criterion].shape[1]
-    i_sel = np.argmin(results[stop_set][stop_criterion],2)
+    n_exp = 1 if len(results[stop_set][stop_criterion].shape) == 1 else results[stop_set][stop_criterion].shape[1] ##
+    i_sel = np.array([[0]]*len(results[stop_set][stop_criterion])) if len(results[stop_set][stop_criterion].shape) == 1 else np.argmin(results[stop_set][stop_criterion],2) ##
     results_sel = {'train': {}, 'valid': {}, 'test': {}}
 
     for k in results['valid'].keys():
         # To reduce dimension
-        results_sel['train'][k] = np.sum(results['train'][k],2)
-        results_sel['valid'][k] = np.sum(results['valid'][k],2)
+        results_sel['train'][k] = results['train'][k] if len(results['train'][k].shape) == 1 else np.sum(results['train'][k],2)##
+        results_sel['valid'][k] = results['valid'][k] if len(results['valid'][k].shape) == 1 else np.sum(results['valid'][k],2)##
 
         if k in results['test']:
-            results_sel['test'][k] = np.sum(results['test'][k],2)
+            results_sel['test'][k] = results['test'][k] if len(results['test'][k].shape) == 1 else np.sum(results['test'][k],2) ##
 
-        for ic in range(len(configs)):
-            for ie in range(n_exp):
-                results_sel['train'][k][ic,ie,] = results['train'][k][ic,ie,i_sel[ic,ie],]
-                results_sel['valid'][k][ic,ie,] = results['valid'][k][ic,ie,i_sel[ic,ie],]
+        for ic in range(len(configs)):  #i_config
+            for ie in range(n_exp):     #i_experiment
+                ###used to be results_sel['train'][k][ic,ie,] = results['train'][k][ic,ie,i_sel[ic,ie],]
+                ###analogous for valid and test
+                results_sel['train'][k][ic][ie,][i_sel[ic,ie],] = results['train'][k][ic][ie][i_sel[ic,ie],]
+                results_sel['valid'][k][ic][ie,][i_sel[ic,ie],] = results['valid'][k][ic][ie][i_sel[ic,ie],]
 
                 if k in results['test']:
-                    results_sel['test'][k][ic,ie,] = results['test'][k][ic,ie,i_sel[ic,ie],]
+                    results_sel['test'][k][ic][ie,][i_sel[ic,ie],] = results['test'][k][ic][ie][i_sel[ic,ie],]
 
     print 'Early stopping:'
     print np.mean(i_sel,1)

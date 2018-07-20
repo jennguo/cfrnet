@@ -66,9 +66,9 @@ def run(cfg_file, num_runs):
 
     for i in range(num_runs):
         cfg = sample_config(configs)
-        if is_used_cfg(cfg, used_cfg_file):
-            print 'Configuration used, skipping'
-            continue
+        #if is_used_cfg(cfg, used_cfg_file):
+        #    print 'Configuration used, skipping'
+        #    continue
 
         save_used_cfg(cfg, used_cfg_file)
 
