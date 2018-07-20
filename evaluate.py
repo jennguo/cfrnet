@@ -1,5 +1,5 @@
-#I understand what this does. When called and provided with the config file path as parameter, it loads the configs and calls cfr.evaluation.evaluate(...), then saves the results.
-#from the readme: The script evaluate.py performs an evaluation of a trained model based on the predictions made for the training and test sets.
+#loads the configs and calls cfr.evaluation.evaluate(...), then saves the results
+#from readme: The script evaluate.py performs an evaluation of a trained model based on the predictions made for the training and test sets.
 
 import sys
 import os
@@ -29,16 +29,17 @@ def sort_by_config(results, configs, key):
 
     return results, configs_sorted
 
+
 def load_config(config_file):  														# returns the dictionary defined in the config file
     with open(config_file, 'r') as f:
-		#take every line l in the file, then split it by '=' if it has one, and put this tuple/list of 2 into the cfg list so now cfg is a list of pairs
+        # take every line l in the file, then split it by '=' if it has one, and put this tuple/list of 2 into the cfg list so now cfg is a list of pairs
         cfg = [l.split('=') for l in f.read().split('\n') if '=' in l]
-		#convert cfg to a dictionary, evaluating the strings (what was on the right of the '=')
+        # convert cfg to a dictionary, evaluating the strings (what was on the right of the '=')
         cfg = dict([(kv[0], eval(kv[1])) for kv in cfg])
     return cfg
 
+
 def evaluate(config_file, overwrite=False, filters=None):
-	
     if not os.path.isfile(config_file): 											# load the configs
         raise Exception('Could not find config file at path: %s' % config_file)
 
@@ -51,7 +52,7 @@ def evaluate(config_file, overwrite=False, filters=None):
 
     data_train = cfg['datadir']+'/'+cfg['dataform']									# set the training and test directories, data_train and data_test, accordingly
     data_test = cfg['datadir']+'/'+cfg['data_test']
-    binary = False																	#? binary indicates if the loss function is log or not
+    binary = False																	# binary = is the data binary? if log loss function was used then yes
     if cfg['loss'] == 'log':
         binary = True
 

@@ -94,17 +94,17 @@ def pdist2(X,Y):
 
 #======================================================================================================= cf_nn(...) ================================================================
 
-def cf_nn(x, t):                            # counterfactual neural network!!
+def cf_nn(x, t):                            # counterfactual neural network
     It = np.array(np.where(t==1))[0,:]      # find indices (I) of treated group (which has t = 1)
     Ic = np.array(np.where(t==0))[0,:]                      # and control group (which has t = 0)
 
     x_c = x[Ic,:]                           # separate out the treated and control x's
     x_t = x[It,:]
 
-    D = pdist2(x_c, x_t)                    # calculates euclidean distance
+    D = pdist2(x_c, x_t)                    # calculates euclidean distances
 
-    nn_t = Ic[np.argmin(D,0)]
-    nn_c = It[np.argmin(D,1)]
+    nn_t = Ic[np.argmin(D,0)]               ## why different axes????
+    nn_c = It[np.argmin(D,1)]               ##
 
     return nn_t, nn_c
 

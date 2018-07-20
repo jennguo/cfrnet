@@ -137,11 +137,11 @@ def select_parameters(results, configs, stop_set, stop_criterion, choice_set, ch
             for ie in range(n_exp):     #i_experiment
                 ###used to be results_sel['train'][k][ic,ie,] = results['train'][k][ic,ie,i_sel[ic,ie],]
                 ###analogous for valid and test
-                results_sel['train'][k][ic][ie,][i_sel[ic,ie],] = results['train'][k][ic][ie][i_sel[ic,ie],]
-                results_sel['valid'][k][ic][ie,][i_sel[ic,ie],] = results['valid'][k][ic][ie][i_sel[ic,ie],]
+                results_sel['train'][k][ic][ie,] = results['train'][k][ic][ie][i_sel[ic,ie],]
+                results_sel['valid'][k][ic][ie,] = results['valid'][k][ic][ie][i_sel[ic,ie],]
 
                 if k in results['test']:
-                    results_sel['test'][k][ic][ie,][i_sel[ic,ie],] = results['test'][k][ic][ie][i_sel[ic,ie],]
+                    results_sel['test'][k][ic][ie,] = results['test'][k][ic][ie][i_sel[ic,ie],]
 
     print 'Early stopping:'
     print np.mean(i_sel,1)
