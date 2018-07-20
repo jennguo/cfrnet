@@ -190,7 +190,7 @@ def train(CFR, sess, train_step, D, I_valid, D_test, logfile, i_exp):     ##this
                     CFR.t: 1-D_test['t'], CFR.do_in: 1.0, CFR.do_out: 1.0})
                 preds_test.append(np.concatenate((y_pred_f_test, y_pred_cf_test),axis=1))
 
-            if FLAGS.save_rep and i_exp == 1:
+            if FLAGS.save_rep:## and i_exp == 1:
                 reps_i = sess.run([CFR.h_rep], feed_dict={CFR.x: D['x'], \
                     CFR.do_in: 1.0, CFR.do_out: 0.0})##do = dropout
                 reps.append(reps_i)
@@ -405,11 +405,11 @@ def run(outdir):
             np.savez(npzfile_test, pred=out_preds_test)
 
         ''' Save representations '''
-        if FLAGS.save_rep and i_exp == 1:
-            np.savez(repfile, rep=reps)
+        if FLAGS.save_rep:## and i_exp == 1:
+            np.savez(repfile+"_"+str(i_exp), rep=reps)
 
             if has_test:
-                np.savez(repfile_test, rep=reps_test)
+                np.savez(repfile_test+"_"+str(i_exp), rep=reps_test)
 
 def main(argv=None):  # pylint: disable=unused-argument
     """ Main entry point """
