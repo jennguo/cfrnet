@@ -66,15 +66,15 @@ class cfr_net(object):
         self.x = x
         self.t = t
         self.y_ = y_
-        self.p_t = p_t              #?
+        self.p_t = p_t              # propensity of ttmt? called "p_treated"
         self.r_alpha = r_alpha      # hypar for reducing imbalance in the repn of the data (larger = penalize imbalance more)
         self.r_lambda = r_lambda    # hypar for regzn (larger = penalize complexity more)
-        self.do_in = do_in          #?
-        self.do_out = do_out        #?
+        self.do_in = do_in          # dropout_in
+        self.do_out = do_out        # dropout_out
 
-        dim_input = dims[0]
-        dim_in = dims[1]
-        dim_out = dims[2]
+        dim_input = dims[0]         # dim of x?
+        dim_in = dims[1]            # dim of phi?
+        dim_out = dims[2]           # dim of y?
 
         weights_in = []; biases_in = []
 
@@ -227,7 +227,7 @@ class cfr_net(object):
         for i in range(0, FLAGS.n_out):
             wo = self._create_variable_with_weight_decay(
                     tf.random_normal([dims[i], dims[i+1]],
-                        stddev=FLAGS.weight_init/np.sqrt(dims[i])),
+                                     stddev=FLAGS.weight_init/np.sqrt(dims[i])),
                     'w_out_%d' % i, 1.0)
             weights_out.append(wo)
 
@@ -253,12 +253,12 @@ class cfr_net(object):
 
         return y, weights_out, weights_pred
 
-    def _build_output_graph(self, rep, t, dim_in, dim_out, do_out, FLAGS):
+    def _build_output_graph(self, rep, t, dim_in, dim_out, do_out, FLAGS): #rep is the representation!!!!
         ''' Construct output/regression layers '''
 
-        if FLAGS.split_output:
+        if FLAGS.split_output: # if the nn should have 2 heads
 
-            i0 = tf.to_int32(tf.where(t < 1)[:,0])
+            i0 = tf.to_int32(tf.where(t < 1)[:,0]) # i for indices where t<1
             i1 = tf.to_int32(tf.where(t > 0)[:,0])
 
             rep0 = tf.gather(rep, i0)

@@ -64,9 +64,9 @@ __DEBUG__ = False
 if FLAGS.debug:
     __DEBUG__ = True
 
-def train(CFR, sess, train_step, D, I_valid, D_test, logfile, i_exp):     ##this method does the training!!!
     """ Trains a CFR model on supplied data """
 
+def train(CFR, sess, train_step, D, I_valid, D_test, logfile, i_exp):     ##this method does the training!!! BUT YOU CAN'T DEBUG IT IF YOU'RE CALLING FROM CFR_PARAM_SEARCH, BECAUSE IT CALLS THE SCRIPT
     ''' Train/validation split '''
     n = D['x'].shape[0]
     I = range(n); I_train = list(set(I)-set(I_valid))
@@ -192,7 +192,7 @@ def train(CFR, sess, train_step, D, I_valid, D_test, logfile, i_exp):     ##this
 
             if FLAGS.save_rep and i_exp == 1:
                 reps_i = sess.run([CFR.h_rep], feed_dict={CFR.x: D['x'], \
-                    CFR.do_in: 1.0, CFR.do_out: 0.0})
+                    CFR.do_in: 1.0, CFR.do_out: 0.0})##do = dropout
                 reps.append(reps_i)
 
                 if D_test is not None:
