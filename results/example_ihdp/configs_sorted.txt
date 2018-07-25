@@ -1,2 +1,0 @@
-p_alpha=0.0
-p_alpha=1.0

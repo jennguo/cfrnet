@@ -1,4 +1,3 @@
-#this file, when run, just calls the run(...) method below. 
 
 import sys
 import os
