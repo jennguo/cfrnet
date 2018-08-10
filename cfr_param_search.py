@@ -59,6 +59,9 @@ def run(cfg_file, num_runs):
     outdir = configs['outdir'][0]
     used_cfg_file = '%s/used_configs.txt' % outdir
 
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
     if not os.path.isfile(used_cfg_file):
         f = open(used_cfg_file, 'w')
         f.close()

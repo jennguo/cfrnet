@@ -86,7 +86,7 @@ def load_results(output_dir):
 
     # Load each result folder
     results = []
-    for dir in exp_dirs:
+    for dir in sorted(exp_dirs):
         dir_result = load_single_result(dir)
         if dir_result is not None:
             results.append(dir_result)

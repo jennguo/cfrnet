@@ -208,7 +208,7 @@ def plot_option_correlation(output_dir, diff_opts, results, configs,
                 plt.plot([i-0.1, i+0.1], [m2, m2], 'g', linewidth=LINE_WIDTH)
 
         plt.xticks(range(len(x_range)), x_range)
-        plt.title(r'$\mathrm{Influence\/of\/%s\/on\/%s\/on\/%s}$' % (k, choice_criterion, choice_set))
+        plt.title(r'$\mathrm{Influence\/of\/%s\/on\/%s\/on\/%s}$' % (k.replace('_','\_'), choice_criterion, choice_set))
         plt.ylabel('%s' % (choice_criterion))
         plt.xlabel('options')
         plt.xlim(-0.5, len(x_range)-0.5)
