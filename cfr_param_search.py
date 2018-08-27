@@ -72,8 +72,6 @@ def run(cfg_file, num_runs):
         #    print 'Configuration used, skipping'
         #    continue
 
-        save_used_cfg(cfg, used_cfg_file)
-
         print '------------------------------'
         print 'Run %d of %d:' % (i+1, num_runs)
         print '------------------------------'
@@ -81,6 +79,8 @@ def run(cfg_file, num_runs):
 
         flags = ' '.join('--%s %s' % (k,str(v)) for k,v in cfg.iteritems())
         call('python cfr_net_train.py %s' % flags, shell=True)
+
+        save_used_cfg(cfg, used_cfg_file)
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
