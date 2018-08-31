@@ -234,13 +234,17 @@ def run(outdir):
     log(logfile, 'Training with hyperparameters: alpha=%.2g, lambda=%.2g' % (FLAGS.p_alpha,FLAGS.p_lambda))
 
     ''' Load Data '''
-    npz_input = False
-    if dataform[-3:] == 'npz':
-        npz_input = True
+    npz_input = (dataform[-4:] == '.npz')
+    csv_input = (dataform[-4:] == '.csv')
+
     if npz_input:
         datapath = dataform
         if has_test:
             datapath_test = dataform_test
+    elif csv_input:
+        datapath = dataform
+        if has_test:
+            datapath_test = dataform
     else:
         datapath = dataform % 1
         if has_test:
@@ -249,10 +253,16 @@ def run(outdir):
     log(logfile,     'Training data: ' + datapath)
     if has_test:
         log(logfile, 'Test data:     ' + datapath_test)
-    D = load_data(datapath)
-    D_test = None
-    if has_test:
-        D_test = load_data(datapath_test)
+    if csv_input:
+        if has_test:
+            D, D_test = load_data_csvs(datapath, 0.1)
+        else:
+            D, _ = load_data_csvs(datapath, 0)
+    else:
+        D = load_data(datapath)
+        D_test = None
+        if has_test:
+            D_test = load_data(datapath_test)
 
     log(logfile, 'Loaded data with shape [%d,%d]' % (D['n'], D['dim']))
 

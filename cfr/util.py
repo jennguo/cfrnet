@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import os
 
 SQRT_CONST = 1e-10
 
@@ -64,6 +65,57 @@ def load_data(fname):
     data['n'] = data['x'].shape[0]
 
     return data
+
+# load data from csv files
+def load_data_csvs(data_path_unformatted, test_split):
+    """ Load data set """
+    n_reps = 0
+    while os.path.isfile(data_path_unformatted % (n_reps + 1)):
+        n_reps += 1
+    if n_reps == 0:
+        raise Exception('No data found at %s' % data_path_unformatted)
+
+    data = {}
+    if test_split != 0.0:
+        data_test = {}
+    else:
+        data_test = None
+
+    for i in range(n_reps):
+        data_in = np.loadtxt(data_path_unformatted % (i + 1), delimiter=',')
+        if i == 0: # set up arrays
+            total_sample_size = data_in.shape[0]
+            train_sample_size = int(round(total_sample_size * (1 - test_split)))
+            test_sample_size = total_sample_size - train_sample_size
+            data['HAVE_TRUTH'] = True #TODO: detect whether ycf is present
+            data['n'] = train_sample_size
+            data['dim'] = data_in.shape[1] - 5 # there are five non-x columns: t,yf,ycf,mu0,mu1
+
+            data['t'] = np.zeros((train_sample_size,n_reps))
+            data['yf'] = np.zeros((train_sample_size,n_reps))
+            data['ycf'] = np.zeros((train_sample_size,n_reps))
+            data['x'] = np.zeros((train_sample_size, data['dim'], n_reps))
+            if test_split != 0.0:
+                data_test['HAVE_TRUTH'] = True  # TODO: detect whether ycf is present
+                data_test['n'] = total_sample_size - train_sample_size
+                data['dim'] = data_in.shape[1] - 5  # there are five non-x columns: t,yf,ycf,mu0,mu1
+
+                data_test['t'] = np.zeros((test_sample_size, n_reps))
+                data_test['yf'] = np.zeros((test_sample_size, n_reps))
+                data_test['ycf'] = np.zeros((test_sample_size, n_reps))
+                data_test['x'] = np.zeros((test_sample_size, data_test['dim'], n_reps))
+
+        data['t'][:,i] = data_in[:train_sample_size, 0]
+        data['yf'][:,i] = data_in[:train_sample_size, 1]
+        data['ycf'][:,i] = data_in[:train_sample_size, 2]
+        data['x'][:,:,i] = data_in[:train_sample_size, 5:]
+        if test_split != 0.0:
+            data_test['t'][:,i] = data_in[train_sample_size:, 0]
+            data_test['yf'][:,i] = data_in[train_sample_size:, 1]
+            data_test['ycf'][:,i] = data_in[train_sample_size:, 2]
+            data_test['x'] = data_in[train_sample_size:, 5:]
+
+    return data, data_test
 
 # """ Load sparse data set """
 def load_sparse(fname):
