@@ -352,20 +352,13 @@ def evaluate(output_dir, data_path_train, data_path_test=None, binary=False):
     if Log.VERBOSE and multiple_exps:
         print 'Multiple data (experiments) detected'
 
-    # Load training data
+    # Load training and test data
     if Log.VERBOSE:
         print 'Loading TRAINING data %s...' % data_path_train
-    data_train = load_data(data_path_train)
-
-    # Load test data
-    if data_path_test is not None:
-        if Log.VERBOSE:
+        if data_path_test is not None:
             print 'Loading TEST data %s...' % data_path_test
-        data_test = load_data(data_path_test)
-    else:
-        data_test = None
 
-
+    data_train, data_test = load_train_test_data(data_path_train, data_path_test)
 
     # Evaluate all results
     eval_results = []
